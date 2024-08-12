@@ -13,8 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($_POST['isAdd']) && $_POST['isAdd'] == 'true') {
         $input_email = $_POST['email'];
-        $input_password = $_POST['password'];
-        // Fetch user with given username
+        // Fetch user with given email
         $sql = "SELECT * FROM users WHERE email = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("s", $input_email);
@@ -24,16 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // If user exists
         if ($result->num_rows > 0) {
             $user = $result->fetch_assoc();
-
-            // Verify the password
-            if (password_verify($input_password, $user['password'])) {
-                unset($user['password']); // Removing password from the response for security reasons
-                echo json_encode(['message' => 'Login successful!', 'user' => $user]);
-            } else {
-                echo json_encode(['error' => 'Incorrect password!']);
-            }
+            echo json_encode(['message' => 'Email found!', 'user' => $user]);
         } else {
-            echo json_encode(['error' => 'Login not found!']);
+            echo json_encode(['error' => 'Email not found!', 'user' => 'null']);
         }
     } else {
         echo json_encode(['error' => 'Invalid request!']);
